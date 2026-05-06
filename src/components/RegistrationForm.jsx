@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../firebase'; // Pulling in your Firebase connection!
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import { db, functions } from '../firebase'; // Pulling in your Firebase connection!
 
 const trackPrices = {
-  sensorcraft: 1299,
-  robotics: 1599,
-  iot: 1999
+  sensorcraft: 10,
+  robotics: 5,
+  iot: 15
 };
 
 export default function RegistrationForm() {
@@ -17,71 +18,95 @@ export default function RegistrationForm() {
   // === FUNCTION TO HANDLE REGISTRATION & PAYMENT ===
   const handleRegistration = async (e) => {
     e.preventDefault();
+    
+    // 1. Grab the form element immediately before React recycles the event
+    const formElement = e.target; 
+    
     setIsSubmitting(true);
     setStatusMessage({ type: '', text: '' });
 
-    const formData = new FormData(e.target);
+    const formData = new FormData(formElement);
     const data = Object.fromEntries(formData.entries());
-
-    // 1. Calculate the price based on the selected track
     const amountInRupees = trackPrices[data.selectedTrack];
     
     if (!amountInRupees) {
-      setStatusMessage({ type: 'error', text: '❌ Please select a valid track.' });
-      setIsSubmitting(false);
+      setIsSubmitting(false); // Stop spinner if no track selected
       return;
     }
 
-    // Razorpay requires the amount in paise (Rupees * 100)
-    const amountInPaise = amountInRupees * 100;
+    try {
+      const createOrder = httpsCallable(functions, 'createOrder');
+      const orderResponse = await createOrder({ amount: amountInRupees });
+      const orderId = orderResponse.data.orderId;
 
-    // 2. Setup Razorpay Options
-    const options = {
-      key: "rzp_test_SlpCo0mrJwuM0F", // TODO: Put your Razorpay Test Key here
-      amount: amountInPaise, 
-      currency: "INR",
-      name: "IOTive Solutions LLP",
-      description: `Bootcamp Registration: ${data.selectedTrack}`,
-      image: "https://your-logo-url.com/logo.png", // Optional: Add your logo URL here later
-      handler: async function (response) {
-        // THIS CODE RUNS ONLY IF PAYMENT IS SUCCESSFUL
-        try {
-          // 3. Save to Firebase with the Success Transaction ID
-          await addDoc(collection(db, 'bootcamp_registrations'), {
-            ...data, // This spreads all the form data (name, phone, etc.)
-            paymentStatus: "Paid",
-            transactionID: response.razorpay_payment_id,
-            amountPaid: amountInRupees,
-            timestamp: serverTimestamp()
-          });
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: amountInRupees * 100,
+        currency: "INR",
+        name: "IOTive Solutions LLP",
+        description: `Bootcamp Registration: ${data.selectedTrack}`,
+        order_id: orderId, 
+        
+        // 2. Add an 'ondismiss' listener to catch users closing the popup
+        modal: {
+          ondismiss: function() {
+            setIsSubmitting(false); // Stop the spinner!
+          }
+        },
 
-          setStatusMessage({ type: 'success', text: `✅ Payment Successful! ID: ${response.razorpay_payment_id}. Registration saved!` });
-          e.target.reset(); // Clear form on success
-        } catch (error) {
-          console.error("Firebase Error: ", error);
-          setStatusMessage({ type: 'error', text: '❌ Payment received, but error saving data. Please contact support.' });
-        }
-      },
-      prefill: {
-        name: data.parentName,
-        email: data.contactEmail,
-        contact: data.contactPhone
-      },
-      theme: {
-        color: "#2563eb" // Matches your blue theme
-      }
-    };
+        handler: async function (response) {
+          try {
+            setStatusMessage({ type: 'success', text: '⏳ Verifying payment securely...' });
+            
+            const verifyPayment = httpsCallable(functions, 'verifyAndSavePayment');
+            await verifyPayment({
+              paymentData: {
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature
+              },
+              registrationData: data 
+            });
 
-    // 4. Open the Razorpay Window
-    const rzp = new window.Razorpay(options);
+            setStatusMessage({ type: 'success', text: `✅ Verification Complete! ID: ${response.razorpay_payment_id}. Seat Secured!` });
+            
+            // 3. Use our safely stored form element to reset the inputs
+            formElement.reset(); 
+            
+          } catch (error) {
+            console.error("Verification Error: ", error);
+            setStatusMessage({ type: 'error', text: '❌ Payment verification failed. Please contact support.' });
+          } finally {
+            // 4. Stop the spinner whether verification succeeds or fails
+            setIsSubmitting(false); 
+          }
+        },
+        prefill: {
+          name: data.parentName,
+          email: data.contactEmail,
+          contact: data.contactPhone
+        },
+        theme: { color: "#2563eb" }
+      };
+
+      const rzp = new window.Razorpay(options);
+      
+      rzp.on('payment.failed', function (response){
+        setStatusMessage({ type: 'error', text: `❌ Payment Failed: ${response.error.description}` });
+        // 5. Stop the spinner if the credit card is declined
+        setIsSubmitting(false); 
+      });
+      
+      rzp.open();
+
+    } catch (error) {
+      console.error("Backend Error:", error);
+      setStatusMessage({ type: 'error', text: '❌ Error initializing payment. Please try again later.' });
+      setIsSubmitting(false); // Stop spinner if backend order fails
+    }
     
-    // Handle if the user closes the window without paying
-    rzp.on('payment.failed', function (response){
-      setStatusMessage({ type: 'error', text: `❌ Payment Failed: ${response.error.description}` });
-    });
-
-    rzp.open();
-    setIsSubmitting(false);
+    // Note: We removed the setIsSubmitting(false) from the very bottom, 
+    // because Razorpay handles the rest of the lifecycle asynchronously!
   };
 
   // === FUNCTION TO HANDLE ENQUIRY ===
