@@ -29,32 +29,40 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <motion.a
-            href="#"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-3 cursor-pointer"
-          >
+          <div className="flex items-center gap-3">
             {/* IOTive Logo */}
-            <img
-              src={Logo}
-              className="h-10 md:h-12 w-auto object-contain"
-              alt="IOTive Logo"
-            />
+            <motion.a
+              href="https://github.com/sahilvkale/bootcamp/blob/main/README.md"
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.05 }}
+            >
+              <img
+                src={Logo}
+                className="h-10 md:h-12 w-auto object-contain"
+                alt="IOTive Logo"
+              />
+            </motion.a>
 
             {/* Divider */}
             <div className="h-8 w-[1px] bg-slate-600"></div>
 
             {/* IOIT Logo */}
-            <div className="bg-white p-2 rounded-lg">
-            <img
-              src={IOIT_Logo}
-              
-              className="h-7 md:h-12 w-auto object-contain"
-              alt="AISSMS IOIT Logo"
-            />
-            </div>
-          </motion.a>
+            <motion.a
+              href="https://aissmsioit.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.05 }}
+              className="bg-white p-2 rounded-lg"
+            >
+              <img
+                src={IOIT_Logo}
+                className="h-7 md:h-12 w-auto object-contain"
+                alt="AISSMS IOIT Logo"
+              />
+            </motion.a>
+
+          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
