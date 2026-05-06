@@ -3,12 +3,16 @@ import admin from "firebase-admin";
 
 // Initialize Firebase Admin safely in a serverless environment
 if (!admin.apps.length) {
+  // Grab the key and aggressively clean it of quotes and fix newlines
+  const cleanPrivateKey = process.env.FIREBASE_PRIVATE_KEY
+    ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n').replace(/^"|"$/g, '').replace(/^'|'$/g, '')
+    : undefined;
+
   admin.initializeApp({
     credential: admin.credential.cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,   
+      projectId: process.env.FIREBASE_PROJECT_ID,
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      // The replace() is crucial for Vercel to read multi-line private keys
-      privateKey: process.env.FIREBASE_PRIVATE_KEY,
+      privateKey: cleanPrivateKey,
     }),
   });
 }
