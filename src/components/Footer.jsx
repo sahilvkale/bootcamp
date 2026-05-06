@@ -1,4 +1,7 @@
 import { motion } from 'framer-motion';
+import { FaEnvelope, FaInstagram, FaLinkedinIn, FaYoutube } from "react-icons/fa";
+
+import Logo from '../assets/Workshop_Images/IOTiveSolutionsLLP.png';
 
 export default function Footer() {
   return (
@@ -7,12 +10,9 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
           {/* Company Info */}
           <div>
-            <div className="text-2xl font-bold text-white tracking-wider mb-4">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">IOT</span>
-              <span>ive</span>
-            </div>
+             <img src={Logo} height={45}  width={90} alt="Description of image" />;
             <p className="text-slate-400 text-sm leading-relaxed">
-              Empowering the next generation of innovators in Pune & beyond with hands-on tech education.
+              Turning Ideas into Innovation. We specialize in IoT, PCB design, and custom electronics solutions for students, startups, and makers.
             </p>
           </div>
 
@@ -40,39 +40,56 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-2 text-slate-400">
                 <span>📞</span>
-                <span>+91 12345 67890</span>
+                <span>+91 8055499119</span>
               </li>
               <li className="flex items-center gap-2 text-slate-400">
                 <span>✉️</span>
-                <span>info@iotive.tech</span>
+                <span>iotivetech@gmail.com</span>
               </li>
             </ul>
           </div>
 
           {/* Social Links */}
           <div>
-            <h4 className="text-white font-bold mb-4">Follow Us</h4>
-            <div className="flex gap-3">
-              {['🐙', '🔗', '✉️'].map((icon, index) => (
+            <h4 className="text-white font-bold mb-4 text-lg">Connect With Us</h4>
+            <div className="flex gap-4">
+              
+              {[
+                {
+                  icon: <FaInstagram />,
+                  link: "https://www.instagram.com/iotive.official",
+                },
+                {
+                  icon: <FaLinkedinIn />,
+                  link: "https://www.linkedin.com",
+                },
+                {
+                  icon: <FaEnvelope />,
+                  link: "iotivetech@gmail.com",
+                },
+              ].map((item, index) => (
                 <motion.a
                   key={index}
-                  href="#"
-                  whileHover={{ y: -3 }}
-                  className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center text-slate-400 hover:text-blue-400 hover:bg-slate-700 transition-colors text-xl"
+                  href={item.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ y: -4, scale: 1.05 }}
+                  className="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center text-slate-300 hover:text-white hover:bg-blue-500 transition-all duration-300 text-lg"
                 >
-                  {icon}
+                  {item.icon}
                 </motion.a>
               ))}
+
             </div>
           </div>
         </div>
-
         <div className="border-t border-slate-800 pt-8 text-center">
           <p className="text-slate-500 text-sm">
             © {new Date().getFullYear()} IOTive Solutions LLP. All rights reserved.
           </p>
         </div>
       </div>
+      
     </footer>
   );
 }

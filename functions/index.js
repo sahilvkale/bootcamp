@@ -60,23 +60,33 @@ exports.verifyAndSavePayment = functions.https.onCall(async (data, context) => {
     .update(body.toString())
     .digest("hex");
 
-  // 2. Check if they match
-  if (expectedSignature === paymentData.razorpay_signature) {
+    // 2. Check if they match
+    if (expectedSignature === paymentData.razorpay_signature) {
     // SECURITY PASSED! 
-    try {
-      await db.collection("bootcamp_registrations").add({
-        ...registrationData,
-        paymentStatus: "Paid",
-        transactionID: paymentData.razorpay_payment_id,
-        orderID: paymentData.razorpay_order_id,
-        timestamp: FieldValue.serverTimestamp()
-      });
-      return { success: true, message: "Payment verified and saved!" };
-    } catch (dbError) {
-      console.error("Database error:", dbError);
-      throw new functions.https.HttpsError("internal", "Payment verified, but failed to save record.");
-    }
-  } else {
+        try {
+        // Save the registration
+        await db.collection("bootcamp_registrations").add({
+            ...registrationData,
+            paymentStatus: "Paid",
+            transactionID: paymentData.razorpay_payment_id,
+            orderID: paymentData.razorpay_order_id,
+            timestamp: FieldValue.serverTimestamp()
+        });
+
+        // Increment the correct batch counter!
+        const batchType = registrationData.batchPreference; // "weekday" or "weekend"
+        if (batchType === "weekday" || batchType === "weekend") {
+            await db.collection("bootcamp_metadata").doc("batch_stats").update({
+            [`${batchType}Count`]: FieldValue.increment(1)
+            });
+        }
+
+        return { success: true, message: "Payment verified and saved!" };
+        } catch (dbError) {
+        console.error("Database error:", dbError);
+        throw new functions.https.HttpsError("internal", "Payment verified, but failed to save record.");
+        } 
+    } else {
     // SECURITY FAILED!
     throw new functions.https.HttpsError("permission-denied", "Invalid payment signature.");
   }

@@ -1,18 +1,33 @@
-import { useState } from 'react';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { getFunctions, httpsCallable } from 'firebase/functions';
-import { db, functions } from '../firebase'; // Pulling in your Firebase connection!
+import { useState, useEffect } from 'react';
+import { collection, addDoc, serverTimestamp, doc, onSnapshot } from 'firebase/firestore';
+import { httpsCallable } from 'firebase/functions'; 
+import { db, functions } from '../firebase';
 
 const trackPrices = {
-  sensorcraft: 10,
-  robotics: 5,
-  iot: 15
+  sensorcraft: 1299,
+  robotics: 1599,
+  iot: 1999
 };
 
 export default function RegistrationForm() {
   const [activeTab, setActiveTab] = useState('register');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
+  
+  // NEW: State to hold our live batch capacities
+  const [capacities, setCapacities] = useState({
+    weekdayCount: 0, weekendCount: 0, weekdayLimit: 20, weekendLimit: 20
+  });
+
+  // NEW: Real-time listener for the scoreboard
+  useEffect(() => {
+    const unsub = onSnapshot(doc(db, "bootcamp_metadata", "batch_stats"), (docSnap) => {
+      if (docSnap.exists()) {
+        setCapacities(docSnap.data());
+      }
+    });
+    return () => unsub(); // Cleanup listener when component closes
+  }, []);
 
   // === FUNCTION TO HANDLE REGISTRATION ===
   // === FUNCTION TO HANDLE REGISTRATION & PAYMENT ===
@@ -225,8 +240,20 @@ export default function RegistrationForm() {
                 <label className="block text-sm font-medium text-slate-300 mb-2">Batch Preference</label>
                 <select name="batchPreference" className="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500" required>
                   <option value="">Select Batch...</option>
-                  <option value="weekday">Weekday (Mon, Tue, Wed)</option>
-                  <option value="weekend">Weekend (Fri, Sat, Sun)</option>
+                  <option 
+                    value="weekday" 
+                    disabled={capacities.weekdayCount >= capacities.weekdayLimit}
+                    className={capacities.weekdayCount >= capacities.weekdayLimit ? "text-red-400" : ""}
+                  >
+                    Weekday (Mon, Tue, Wed) {capacities.weekdayCount >= capacities.weekdayLimit ? "- FULL" : `(${capacities.weekdayLimit - capacities.weekdayCount} seats left)`}
+                  </option>
+                  <option 
+                    value="weekend" 
+                    disabled={capacities.weekendCount >= capacities.weekendLimit}
+                    className={capacities.weekendCount >= capacities.weekendLimit ? "text-red-400" : ""}
+                  >
+                    Weekend (Fri, Sat, Sun) {capacities.weekendCount >= capacities.weekendLimit ? "- FULL" : `(${capacities.weekendLimit - capacities.weekendCount} seats left)`}
+                  </option>
                 </select>
               </div>
             </div>
