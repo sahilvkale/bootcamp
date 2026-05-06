@@ -33,10 +33,7 @@ export default function RegistrationForm() {
   // === FUNCTION TO HANDLE REGISTRATION & PAYMENT ===
   const handleRegistration = async (e) => {
     e.preventDefault();
-    
-    // 1. Grab the form element immediately before React recycles the event
     const formElement = e.target; 
-    
     setIsSubmitting(true);
     setStatusMessage({ type: '', text: '' });
 
@@ -45,14 +42,20 @@ export default function RegistrationForm() {
     const amountInRupees = trackPrices[data.selectedTrack];
     
     if (!amountInRupees) {
-      setIsSubmitting(false); // Stop spinner if no track selected
+      setIsSubmitting(false);
       return;
     }
 
     try {
-      const createOrder = httpsCallable(functions, 'createOrder');
-      const orderResponse = await createOrder({ amount: amountInRupees });
-      const orderId = orderResponse.data.orderId;
+      // 1. Call Vercel API to create order
+      const orderRes = await fetch('/api/createOrder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: amountInRupees })
+      });
+      const orderData = await orderRes.json();
+
+      if (!orderRes.ok) throw new Error("Could not create order");
 
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
@@ -60,68 +63,56 @@ export default function RegistrationForm() {
         currency: "INR",
         name: "IOTive Solutions LLP",
         description: `Bootcamp Registration: ${data.selectedTrack}`,
-        order_id: orderId, 
-        
-        // 2. Add an 'ondismiss' listener to catch users closing the popup
+        order_id: orderData.orderId, 
         modal: {
-          ondismiss: function() {
-            setIsSubmitting(false); // Stop the spinner!
-          }
+          ondismiss: function() { setIsSubmitting(false); }
         },
-
         handler: async function (response) {
           try {
             setStatusMessage({ type: 'success', text: '⏳ Verifying payment securely...' });
             
-            const verifyPayment = httpsCallable(functions, 'verifyAndSavePayment');
-            await verifyPayment({
-              paymentData: {
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_signature: response.razorpay_signature
-              },
-              registrationData: data 
+            // 2. Call Vercel API to verify and save
+            const verifyRes = await fetch('/api/verifyPayment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                paymentData: {
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_signature: response.razorpay_signature
+                },
+                registrationData: data 
+              })
             });
 
+            if (!verifyRes.ok) throw new Error("Verification failed");
+
             setStatusMessage({ type: 'success', text: `✅ Verification Complete! ID: ${response.razorpay_payment_id}. Seat Secured!` });
-            
-            // 3. Use our safely stored form element to reset the inputs
             formElement.reset(); 
             
           } catch (error) {
             console.error("Verification Error: ", error);
             setStatusMessage({ type: 'error', text: '❌ Payment verification failed. Please contact support.' });
           } finally {
-            // 4. Stop the spinner whether verification succeeds or fails
             setIsSubmitting(false); 
           }
         },
-        prefill: {
-          name: data.parentName,
-          email: data.contactEmail,
-          contact: data.contactPhone
-        },
-        theme: { color: "#2563eb" }
+        prefill: { name: data.parentName, email: data.contactEmail, contact: data.contactPhone },
+        theme: { color: "#0ea5e9" } // Updated to Arctic Blue
       };
 
       const rzp = new window.Razorpay(options);
-      
       rzp.on('payment.failed', function (response){
         setStatusMessage({ type: 'error', text: `❌ Payment Failed: ${response.error.description}` });
-        // 5. Stop the spinner if the credit card is declined
         setIsSubmitting(false); 
       });
-      
       rzp.open();
 
     } catch (error) {
       console.error("Backend Error:", error);
-      setStatusMessage({ type: 'error', text: '❌ Error initializing payment. Please try again later.' });
-      setIsSubmitting(false); // Stop spinner if backend order fails
+      setStatusMessage({ type: 'error', text: '❌ Error initializing payment. Please try again.' });
+      setIsSubmitting(false); 
     }
-    
-    // Note: We removed the setIsSubmitting(false) from the very bottom, 
-    // because Razorpay handles the rest of the lifecycle asynchronously!
   };
 
   // === FUNCTION TO HANDLE ENQUIRY ===

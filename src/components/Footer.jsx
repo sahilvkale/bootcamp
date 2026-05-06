@@ -10,7 +10,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
           {/* Company Info */}
           <div>
-             <img src={Logo} height={45}  width={90} alt="Description of image" />;
+            <img src={Logo} height={45}  width={90} alt="Description of image" />;
             <p className="text-slate-400 text-sm leading-relaxed">
               Turning Ideas into Innovation. We specialize in IoT, PCB design, and custom electronics solutions for students, startups, and makers.
             </p>
