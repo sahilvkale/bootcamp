@@ -8,12 +8,19 @@ import { motion } from 'framer-motion';
 
 // Your bootcamp curriculum data
 // Your updated bootcamp curriculum data (2 Tracks)
+// Your updated bootcamp curriculum data matching the flyer
 const trackData = [
   {
+    id: "robotics",
     title: "Robotics Workshop",
-    subtitle: "Build & Code • 12 Hours",
+    subtitle: "BUILD & CODE • 12 HOURS",
     price: "₹1,599",
-    featured: true,
+    theme: "blue", // Used for the border and accent colors
+    description: "Bring machines to life! Understand motor mechanics, assemble a robotic chassis, and write logic to make your robot navigate and react.",
+    batches: [
+      { name: "Batch 1 (Weekday Batch)", date: "25th May to 27th May", time: "9:00 AM to 12:00 PM" },
+      { name: "Batch 2 (Weekend Batch)", date: "29th May to 31st May", time: "9:00 AM to 12:00 PM" }
+    ],
     syllabus: [
       "Mechanics & Power. Assembling chassis, DC BO motors, and L298N driver.",
       "Brains & Movement. Coding logic for directional control via Arduino.",
@@ -28,10 +35,16 @@ const trackData = [
     ]
   },
   {
+    id: "iot",
     title: "Getting Started with IoT",
-    subtitle: "Arduino Advanced • 12 Hours",
-    price: "₹1,999",
-    featured: false,
+    subtitle: "ARDUINO ADVANCED • 12 HOURS",
+    price: "₹1,999", 
+    theme: "green", // Used for the border and accent colors
+    description: "Connect your creations to the internet! Master advanced microcontrollers and learn how real-world IoT networks send and receive data globally.",
+    batches: [
+      { name: "Batch 1 (Weekday Batch)", date: "25th May to 27th May", time: "2:00 PM to 5:00 PM" },
+      { name: "Batch 2 (Weekend Batch)", date: "29th May to 31st May", time: "2:00 PM to 5:00 PM" }
+    ],
     syllabus: [
       "Hello Internet! NodeMCU ESP8266 setup and connecting to local Wi-Fi.",
       "Data in the Cloud. Pushing DHT11 sensor data to a live cloud dashboard.",
@@ -234,16 +247,12 @@ function App() {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          {/* UPDATED: Centered 2-column grid and updated prop passing */}
+          <div className="grid md:grid-cols-2 gap-6 md:gap-10 max-w-5xl mx-auto">
             {trackData.map((track, index) => (
               <TrackCard
                 key={index}
-                title={track.title}
-                subtitle={track.subtitle}
-                price={track.price}
-                featured={track.featured}
-                syllabus={track.syllabus}
-                kit={track.kit}
+                track={track}
               />
             ))}
           </div>
