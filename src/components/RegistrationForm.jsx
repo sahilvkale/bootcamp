@@ -196,6 +196,7 @@ export default function RegistrationForm() {
                   <option value="7th">7th Standard</option>
                   <option value="8th">8th Standard</option>
                   <option value="9th">9th Standard</option>
+                  <option value="Others">Other</option>
                 </select>
               </div>
             </div>

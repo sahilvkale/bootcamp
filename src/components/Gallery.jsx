@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 
-// Import your workshop photos (update paths as needed)
+// Import your workshop photos (update  paths as needed)
 import workshop1 from '../assets/Workshop_Images/workshop1.jpg';
 import workshop2 from '../assets/Workshop_Images/workshop2.jpg';
 import workshop3 from '../assets/Workshop_Images/workshop3.jpg';

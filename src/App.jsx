@@ -270,7 +270,7 @@ function App() {
             className="text-center mb-10 md:mb-12"
           >
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 mb-4">Join the Bootcamp</h2>
-            <p className="text-base sm:text-lg text-slate-600 px-4">Secure your spot today or drop us a message if you have any questions.</p>
+            <p className="text-base sm:text-lg text-slate-600 px-4">Secure your spot today or drop us a message if you have any queries.</p>
           </motion.div>
 
           <RegistrationForm />

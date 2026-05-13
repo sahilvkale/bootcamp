@@ -61,7 +61,7 @@ export default function Footer() {
                 },
                 {
                   icon: <FaLinkedinIn />,
-                  link: "https://www.linkedin.com",
+                  link: "https://www.linkedin.com/school/aissms-ioit/",
                 },
                 {
                   icon: <FaEnvelope />,

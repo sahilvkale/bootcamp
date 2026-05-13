@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://www.iotivesolutionsllp.co.in/sitemap.xml

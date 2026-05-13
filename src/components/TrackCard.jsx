@@ -40,7 +40,7 @@ export default function TrackCard({ track }) {
         </p>
       </div>
 
-      {/* Batch Schedule Section (Matches the flyer's pill design) */}
+      {/* Batch Schedule Section (Matches   the flyer's pill design) */}
       <div className="px-6 pb-6">
         <div className="relative border-t border-slate-200 pt-6 mt-2">
           {/* BATCH SCHEDULE Badge */}
