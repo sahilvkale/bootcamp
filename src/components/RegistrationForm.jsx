@@ -232,7 +232,7 @@ export default function RegistrationForm() {
                     className="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500" 
                     required
                   >
-                    <option value="">Select your batch...</option>
+                    <option value="">Select your batch prefrance</option>
                     <option value="weekday">Batch 1: Weekday (25th May to 27th May)</option>
                     <option value="weekend">Batch 2: Weekend (29th May to 31st May)</option>
                   </select>

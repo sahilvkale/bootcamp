@@ -31,7 +31,8 @@ const trackData = [
       "DC BO Motors & Wheels",
       "L298N Motor Driver Module",
       "Arduino Uno R3 & Ultrasonic Sensor",
-      "Battery Holder & Assorted Wires"
+      "Battery Holder & Assorted Wires",
+      "IR sensor Array"
     ]
   },
   {

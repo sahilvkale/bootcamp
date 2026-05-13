@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 export default function TrackCard({ track }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Set colors dynamically based on the flyer's theme (Blue for Robotics, Green for IoT)
+  // Set colors dynamically based  on the flyer's theme (Blue for Robotics, Green for IoT)
   const isBlue = track.theme === 'blue';
   const borderColor = isBlue ? 'border-blue-600' : 'border-emerald-500';
   const textColor = isBlue ? 'text-blue-800' : 'text-emerald-800';
