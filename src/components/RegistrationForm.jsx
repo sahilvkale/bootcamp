@@ -4,7 +4,6 @@ import { httpsCallable } from 'firebase/functions';
 import { db, functions } from '../firebase';
 
 const trackPrices = {
-  sensorcraft: 1299,
   robotics: 1599,
   iot: 1999
 };
@@ -222,7 +221,6 @@ export default function RegistrationForm() {
                 <label className="block text-sm font-medium text-slate-300 mb-2">Select Track</label>
                 <select name="selectedTrack" className="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500" required>
                   <option value="">Choose a track...</option>
-                  <option value="sensorcraft">Sensorcraft (₹1,299)</option>
                   <option value="robotics">Robotics Workshop (₹1,599)</option>
                   <option value="iot">Getting Started with IoT (₹1,999)</option>
                 </select>

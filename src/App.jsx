@@ -7,28 +7,11 @@ import Footer from './components/Footer';
 import { motion } from 'framer-motion';
 
 // Your bootcamp curriculum data
+// Your updated bootcamp curriculum data (2 Tracks)
 const trackData = [
   {
-    title: "Sensorcraft",
-    subtitle: "Arduino Basics",
-    price: "₹1,299",
-    featured: false,
-    syllabus: [
-      "Hello World of Hardware. Intro to microcontrollers and writing first C++ code.",
-      "The Sixth Sense. Wiring IR and Ultrasonic sensors to detect obstacles.",
-      "The Final Build. Creating a Smart Security Alarm prototype."
-    ],
-    kit: [
-      "Arduino Uno R3 (Compatible) + USB Cable",
-      "Half-size Breadboard & Jumper Wires",
-      "LEDs & 220Ω Resistors",
-      "IR Sensor & HC-SR04 Ultrasonic Sensor",
-      "Active Buzzer & 9V Battery"
-    ]
-  },
-  {
     title: "Robotics Workshop",
-    subtitle: "Build & Code",
+    subtitle: "Build & Code • 12 Hours",
     price: "₹1,599",
     featured: true,
     syllabus: [
@@ -46,7 +29,7 @@ const trackData = [
   },
   {
     title: "Getting Started with IoT",
-    subtitle: "Arduino Advanced",
+    subtitle: "Arduino Advanced • 12 Hours",
     price: "₹1,999",
     featured: false,
     syllabus: [
