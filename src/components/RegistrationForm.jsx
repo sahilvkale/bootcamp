@@ -4,7 +4,7 @@ import { httpsCallable } from 'firebase/functions';
 import { db, functions } from '../firebase';
 
 const trackPrices = {
-  robotics: 10,
+  robotics: 1599,
   iot: 1999
 };
 
