@@ -225,26 +225,18 @@ export default function RegistrationForm() {
                   <option value="iot">Getting Started with IoT (₹1,999)</option>
                 </select>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Batch Preference</label>
-                <select name="batchPreference" className="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500" required>
-                  <option value="">Select Batch...</option>
-                  <option 
-                    value="weekday" 
-                    disabled={capacities.weekdayCount >= capacities.weekdayLimit}
-                    className={capacities.weekdayCount >= capacities.weekdayLimit ? "text-red-400" : ""}
+              <div className="space-y-2">
+                  <label className="text-sm font-bold text-slate-300">Preferred Batch Dates *</label>
+                  <select 
+                    name="batchPreference" 
+                    className="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500" 
+                    required
                   >
-                    Weekday (Mon, Tue, Wed) {capacities.weekdayCount >= capacities.weekdayLimit ? "- FULL" : `(${capacities.weekdayLimit - capacities.weekdayCount} seats left)`}
-                  </option>
-                  <option 
-                    value="weekend" 
-                    disabled={capacities.weekendCount >= capacities.weekendLimit}
-                    className={capacities.weekendCount >= capacities.weekendLimit ? "text-red-400" : ""}
-                  >
-                    Weekend (Fri, Sat, Sun) {capacities.weekendCount >= capacities.weekendLimit ? "- FULL" : `(${capacities.weekendLimit - capacities.weekendCount} seats left)`}
-                  </option>
-                </select>
-              </div>
+                    <option value="">Select your batch...</option>
+                    <option value="weekday">Batch 1: Weekday (25th May to 27th May)</option>
+                    <option value="weekend">Batch 2: Weekend (29th May to 31st May)</option>
+                  </select>
+                </div>
             </div>
 
             <button disabled={isSubmitting} type="submit" className="w-full bg-green-600 hover:bg-green-500 disabled:bg-slate-600 text-white font-bold py-4 rounded-lg mt-4 transition-colors shadow-lg shadow-green-600/20">
